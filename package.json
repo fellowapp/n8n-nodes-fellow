@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-fellow",
+  "name": "@fellowapp/n8n-nodes-fellow",
   "version": "0.1.0",
   "description": "Fellow nodes for n8n",
   "type": "module",
@@ -29,6 +29,9 @@
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
     "lintfix": "eslint nodes credentials --fix"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "files": [
     "dist"
