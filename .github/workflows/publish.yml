@@ -1,0 +1,58 @@
+name: Publish Package to GitHub Packages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fetch all history and tags for versioning
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Or the version your project uses
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@${{ github.repository_owner }}' # Scope defaults to the repository owner
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9 # Or the version your project uses
+          run_install: false # We'll run install separately
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile # Use pnpm install with frozen lockfile
+
+      # Optional: Add build step if needed
+      - name: Build
+        run: pnpm run build
+
+      - name: Get package version from package.json
+        id: package_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Get short SHA
+        id: sha
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create unique version string
+        id: version
+        run: echo "version_string=${{ steps.package_version.outputs.version }}-main.${{ steps.sha.outputs.short_sha }}" >> $GITHUB_OUTPUT
+
+      - name: Update package.json version
+        run: npm version ${{ steps.version.outputs.version_string }} --no-git-tag-version --allow-same-version
+
+      - name: Publish package
+        run: pnpm publish --access restricted --no-git-checks # Ensures package is private if repo is public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
