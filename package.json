@@ -2,6 +2,7 @@
   "name": "n8n-nodes-fellow",
   "version": "0.1.0",
   "description": "Fellow nodes for n8n",
+  "type": "module",
   "keywords": [
     "n8n-community-node-package"
   ],
@@ -26,9 +27,8 @@
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials package.json",
-    "lintfix": "eslint nodes credentials package.json --fix",
-    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
+    "lint": "eslint nodes credentials",
+    "lintfix": "eslint nodes credentials --fix"
   },
   "files": [
     "dist"
@@ -43,10 +43,12 @@
     ]
   },
   "devDependencies": {
+    "@eslint/js": "^9.25.1",
     "@types/node": "^22.15.3",
     "@typescript-eslint/parser": "^8.31.1",
     "eslint": "^9.25.1",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "globals": "^16.0.0",
     "gulp": "^5.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
