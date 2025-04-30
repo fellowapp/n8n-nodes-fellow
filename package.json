@@ -24,7 +24,9 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "build": "pnpm build:prod",
+    "build:prod": "cross-env FELLOW_API_URL='https://api.fellow.app/graphql' tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "build:staging": "cross-env FELLOW_API_URL='https://api.staging.fellow.co/graphql' tsc && gulp --gulpfile gulpfile.cjs build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
@@ -49,6 +51,7 @@
     "@eslint/js": "^9.25.1",
     "@types/node": "^22.15.3",
     "@typescript-eslint/parser": "^8.31.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.25.1",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "globals": "^16.0.0",

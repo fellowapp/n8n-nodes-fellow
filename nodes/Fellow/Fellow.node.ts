@@ -10,10 +10,10 @@ import {
 	// ICredentialDataDecryptedObject, // Removed unused import
 	IHookFunctions,
 } from 'n8n-workflow';
-import { meetingRecapDescription } from './descriptions'; // Fix import path quote
+import { meetingRecapDescription } from './descriptions/index'; // Fix import path
 
-// !!! IMPORTANT: Ideally, load this from environment variables or config !!!
-const FELLOW_GRAPHQL_URL = 'https://fellow-1.sci.fellow.dev/graphql'; // Fix string quote
+// Load API URL from environment variable, defaulting to production
+const FELLOW_GRAPHQL_URL = process.env.FELLOW_API_URL || 'https://api.fellow.app/graphql';
 
 // --- Standalone Helper for GraphQL requests ---
 async function callFellowGraphql(
