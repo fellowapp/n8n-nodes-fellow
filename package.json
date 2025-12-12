@@ -60,5 +60,8 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
   }
 }
