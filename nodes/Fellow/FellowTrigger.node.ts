@@ -1,11 +1,82 @@
 import {
 	IHookFunctions,
 	IWebhookFunctions,
+	INodeExecutionData,
+	IExecuteFunctions,
 	IDataObject,
 	INodeType,
 	INodeTypeDescription,
 	IWebhookResponseData,
+	NodeApiError,
 } from 'n8n-workflow';
+
+import { getFellowApiBaseUrl, shouldSkipSslValidation } from './config';
+
+// Human-readable event names for webhook descriptions
+const EVENT_DESCRIPTIONS: Record<string, string> = {
+	'ai_note.generated': 'AI Note Generated',
+	'ai_note.shared_to_channel': 'AI Note Shared to Channel',
+	'action_item.assigned': 'Action Item Assigned',
+	'action_item.completed': 'Action Item Completed',
+};
+
+// Sample payloads for manual testing (execute method)
+const SAMPLE_PAYLOADS: Record<string, IDataObject> = {
+	'ai_note.generated': {
+		event: 'ai_note.generated',
+		timestamp: new Date().toISOString(),
+		data: {
+			meeting_id: 'sample-meeting-123',
+			meeting_title: 'Weekly Team Sync',
+			note_id: 'sample-note-456',
+			generated_at: new Date().toISOString(),
+			summary: 'This is a sample AI-generated meeting summary for testing purposes.',
+			action_items: [
+				{ id: 'ai-1', title: 'Follow up on project timeline', assignee: 'john@example.com' },
+				{ id: 'ai-2', title: 'Share meeting notes with stakeholders', assignee: 'jane@example.com' },
+			],
+		},
+	},
+	'ai_note.shared_to_channel': {
+		event: 'ai_note.shared_to_channel',
+		timestamp: new Date().toISOString(),
+		data: {
+			meeting_id: 'sample-meeting-123',
+			meeting_title: 'Weekly Team Sync',
+			note_id: 'sample-note-456',
+			channel_id: 'sample-channel-789',
+			channel_name: 'Engineering Team',
+			shared_by: 'john@example.com',
+			shared_at: new Date().toISOString(),
+		},
+	},
+	'action_item.assigned': {
+		event: 'action_item.assigned',
+		timestamp: new Date().toISOString(),
+		data: {
+			action_item_id: 'sample-action-123',
+			title: 'Review PR for new feature',
+			description: 'Please review and approve the pull request for the dashboard update.',
+			assignee: 'jane@example.com',
+			assigned_by: 'john@example.com',
+			due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+			meeting_id: 'sample-meeting-123',
+			meeting_title: 'Weekly Team Sync',
+		},
+	},
+	'action_item.completed': {
+		event: 'action_item.completed',
+		timestamp: new Date().toISOString(),
+		data: {
+			action_item_id: 'sample-action-123',
+			title: 'Review PR for new feature',
+			completed_by: 'jane@example.com',
+			completed_at: new Date().toISOString(),
+			meeting_id: 'sample-meeting-123',
+			meeting_title: 'Weekly Team Sync',
+		},
+	},
+};
 
 export class FellowTrigger implements INodeType {
 	description: INodeTypeDescription = {
@@ -83,19 +154,62 @@ export class FellowTrigger implements INodeType {
 			async create(this: IHookFunctions): Promise<boolean> {
 				const webhookUrl = this.getNodeWebhookUrl('default');
 				const event = this.getNodeParameter('event') as string;
+				const credentials = await this.getCredentials('fellowApi');
+				const subdomain = credentials.subdomain as string;
 
-				this.logger.debug(`[Fellow Trigger] create called`);
-				this.logger.debug(`[Fellow Trigger] Webhook URL: ${webhookUrl}`);
-				this.logger.debug(`[Fellow Trigger] Event: ${event}`);
+				this.logger.debug(`[Fellow Trigger] Registering webhook for event: ${event}`);
 
-				// TODO: Implement webhook registration with Fellow API
-				// For now, store a placeholder ID to test the flow
-				const staticData = this.getWorkflowStaticData('node');
-				staticData.webhookId = 'placeholder-webhook-id';
+				// Generate a human-readable description for the webhook
+				const eventName = EVENT_DESCRIPTIONS[event] ?? event;
+				const description = `n8n workflow trigger: ${eventName}`;
 
-				this.logger.info(`[Fellow Trigger] Webhook registration placeholder - would register for event: ${event}`);
+				// Construct the API URL using the subdomain from credentials
+				const apiBaseUrl = getFellowApiBaseUrl(subdomain);
 
-				return true;
+				try {
+
+					// Call Fellow Developer API to create the webhook
+					const response = await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'fellowApi',
+						{
+							method: 'POST',
+							url: `${apiBaseUrl}/webhooks`,
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: {
+								url: webhookUrl,
+								enabled_events: [event],
+								description,
+								status: 'active',
+							},
+							json: true,
+							skipSslCertificateValidation: shouldSkipSslValidation(),
+						},
+					);
+
+					// Extract the webhook ID from the response
+					const webhookId = response?.webhook?.id;
+					if (!webhookId) {
+						throw new Error('Fellow API did not return a webhook ID');
+					}
+
+					// Store the webhook ID for later cleanup
+					const staticData = this.getWorkflowStaticData('node');
+					staticData.webhookId = webhookId;
+
+					this.logger.info(`[Fellow Trigger] Webhook registered successfully: ${webhookId}`);
+
+					return true;
+				} catch (error) {
+					const errorMessage = error instanceof Error ? error.message : String(error);
+					this.logger.error(`[Fellow Trigger] Failed to register webhook: ${errorMessage}`);
+
+					throw new NodeApiError(this.getNode(), { message: errorMessage }, {
+						message: 'Failed to register webhook with Fellow API',
+					});
+				}
 			},
 
 			async delete(this: IHookFunctions): Promise<boolean> {
@@ -109,8 +223,29 @@ export class FellowTrigger implements INodeType {
 					return true;
 				}
 
-				// TODO: Implement webhook deletion with Fellow API
-				this.logger.info(`[Fellow Trigger] Webhook deletion placeholder - would delete webhook: ${webhookId}`);
+				const credentials = await this.getCredentials('fellowApi');
+				const subdomain = credentials.subdomain as string;
+				const apiBaseUrl = getFellowApiBaseUrl(subdomain);
+
+				try {
+					// Call Fellow Developer API to delete the webhook
+					await this.helpers.httpRequestWithAuthentication.call(
+						this,
+						'fellowApi',
+						{
+							method: 'DELETE',
+							url: `${apiBaseUrl}/webhooks/${webhookId}`,
+							skipSslCertificateValidation: shouldSkipSslValidation(),
+						},
+					);
+
+					this.logger.info(`[Fellow Trigger] Webhook deleted successfully: ${webhookId}`);
+				} catch (error) {
+					const errorMessage = error instanceof Error ? error.message : String(error);
+					this.logger.error(`[Fellow Trigger] Failed to delete webhook: ${errorMessage}`);
+					// Don't throw - we still want to clean up the local reference
+					// The webhook may have already been deleted manually
+				}
 
 				delete staticData.webhookId;
 
@@ -124,12 +259,31 @@ export class FellowTrigger implements INodeType {
 
 		this.logger.debug('[Fellow Trigger] Webhook received', { body });
 
-		// TODO: Implement URL challenge response
-		// TODO: Implement event payload handling
+		// TODO: Implement URL challenge response (PR5)
+		// TODO: Implement event payload handling (PR6)
 
 		// For now, pass through the raw payload
 		return {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
+	}
+
+	/**
+	 * Execute method for manual testing.
+	 * Returns sample data based on the selected event type.
+	 */
+	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+		const event = this.getNodeParameter('event', 0) as string;
+
+		this.logger.info(`[Fellow Trigger] Manual execution - returning sample data for event: ${event}`);
+
+		// Get sample payload for the selected event
+		const samplePayload = SAMPLE_PAYLOADS[event] ?? {
+			event,
+			timestamp: new Date().toISOString(),
+			data: { message: 'Sample payload for testing' },
+		};
+
+		return [this.helpers.returnJsonArray([samplePayload])];
 	}
 }
