@@ -6,4 +6,6 @@ dist
 npm-debug.log*
 yarn.lock
 .vscode/launch.json
-.env
+
+# Generated API configuration (created at build time)
+nodes/Fellow/apiConfig.ts

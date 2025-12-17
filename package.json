@@ -23,10 +23,10 @@
   "main": "index.js",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "build": "tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "build:prod": "cross-env FELLOW_API_URL='https://fellow.app/graphql' tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "build:staging": "cross-env FELLOW_API_URL='https://staging.fellow.co/graphql' tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "dev": "tsc --watch",
+    "build": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "build:prod": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "build:staging": "node scripts/generateConfig.js staging && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "dev": "node scripts/generateConfig.js prod && tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
     "lintfix": "eslint nodes credentials --fix"
@@ -60,8 +60,5 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.3"
   }
 }
