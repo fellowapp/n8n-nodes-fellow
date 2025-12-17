@@ -14,12 +14,25 @@ dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
  */
 
 /**
+ * Validates that a subdomain contains only safe characters (alphanumeric and hyphens).
+ * Prevents URL injection via characters like /, @, #, etc.
+ */
+function isValidSubdomain(subdomain: string): boolean {
+	return Boolean(subdomain) && /^[a-zA-Z0-9-]+$/.test(subdomain);
+}
+
+/**
  * Constructs the Fellow API base URL from the subdomain.
  * Can be overridden via FELLOW_API_URL environment variable.
  */
 export function getFellowApiBaseUrl(subdomain: string): string {
 	if (process.env.FELLOW_API_URL) {
 		return process.env.FELLOW_API_URL;
+	}
+	if (!isValidSubdomain(subdomain)) {
+		throw new Error(
+			`Invalid subdomain: "${subdomain}". Subdomain must contain only alphanumeric characters and hyphens.`,
+		);
 	}
 	return `https://${subdomain}.fellow.app/api/v1`;
 }
