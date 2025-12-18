@@ -26,7 +26,8 @@
     "build": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
     "build:prod": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
     "build:staging": "node scripts/generateConfig.js staging && tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "dev": "node scripts/generateConfig.js prod && tsc --watch",
+    "build:dev": "node scripts/generateConfig.js dev && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+    "dev": "node scripts/generateConfig.js dev && tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
     "lintfix": "eslint nodes credentials --fix"

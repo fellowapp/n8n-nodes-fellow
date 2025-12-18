@@ -15,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const environment = process.argv[2] || 'prod';
+const environment = process.argv[2] || 'dev';
 
 // Define API URL patterns for each environment
 const configs = {
@@ -28,6 +28,11 @@ const configs = {
     baseUrlPattern: 'https://{subdomain}.staging.fellow.co/api/v1',
     skipSslValidation: false,
     description: 'Staging environment',
+  },
+  dev: {
+    baseUrlPattern: 'https://{subdomain}.fellow.dev/api/v1',
+    skipSslValidation: true,
+    description: 'Development environment',
   },
 };
 
