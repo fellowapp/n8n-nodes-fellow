@@ -37,6 +37,41 @@ These are the basic steps for working with the starter. For detailed guidance on
 10. Update the LICENSE file to use your details.
 11. [Publish](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry) your package to npm.
 
+## GitHub Actions
+
+This repository includes automated workflows for publishing and deployment:
+
+### Staging Workflow (publish-staging.yml)
+On push to `main`, automatically:
+- Builds the package with staging configuration
+- Publishes to: `@fellowapp/n8n-nodes-fellow-staging`
+- Version format: `{version}-staging.{short-sha}` (e.g., `0.1.0-staging.abc123`)
+
+### Production Workflow (publish-prod.yml)
+On GitHub release creation, automatically:
+- Builds the package with production configuration
+- Publishes to: `@fellowapp/n8n-nodes-fellow`
+- Version: Uses the release tag (e.g., `v0.1.0` → `0.1.0`)
+
+**To create a production release:**
+1. Go to GitHub → Releases → "Draft a new release"
+2. Create a new tag following semver (e.g., `v0.1.0`, `v0.2.0`, `v1.0.0`)
+3. Publish the release
+4. The workflow will automatically build and publish the production package
+
+### Auto-Update ops-workflow-builder
+The `update-ops-workflow-builder.yml` workflow automatically creates a PR to update the n8n node staging version in the `fellowapp/ops-workflow-builder` repository after a successful staging publish.
+
+**Required Secret:**
+- `OPS_WORKFLOW_BUILDER_PAT`: A GitHub Personal Access Token with the following permissions:
+  - `repo` scope (full control of private repositories)
+  - Access to the `fellowapp/ops-workflow-builder` repository
+
+To create this token:
+1. Go to GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)
+2. Generate a new token with `repo` scope
+3. Add it as a repository secret named `OPS_WORKFLOW_BUILDER_PAT` in this repository's settings
+
 ## More information
 
 Refer to our [documentation on creating nodes](https://docs.n8n.io/integrations/creating-nodes/) for detailed information on building your own nodes.
