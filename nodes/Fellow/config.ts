@@ -5,6 +5,7 @@
  * Different builds (prod/staging) will have different API endpoints compiled in.
  */
 
+// @ts-ignore - apiConfig.ts is auto-generated at build time by scripts/generateConfig.js
 import {
 	FELLOW_API_BASE_URL_PATTERN,
 	FELLOW_SKIP_SSL_VALIDATION,

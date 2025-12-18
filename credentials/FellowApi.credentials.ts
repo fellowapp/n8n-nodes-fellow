@@ -12,7 +12,8 @@ export class FellowApi implements ICredentialType {
 			default: '',
 			required: true,
 			placeholder: 'mycompany',
-			description: 'Your Fellow workspace subdomain (e.g., if your Fellow URL is mycompany.fellow.app, enter "mycompany")',
+			description:
+				'Your Fellow workspace subdomain (e.g., if your Fellow URL is mycompany.fellow.app, enter "mycompany")',
 		},
 		{
 			displayName: 'API Key',
