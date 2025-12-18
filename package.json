@@ -44,6 +44,7 @@
       "dist/credentials/FellowApi.credentials.js"
     ],
     "nodes": [
+      "dist/nodes/Fellow/Fellow.node.js",
       "dist/nodes/Fellow/FellowTrigger.node.js"
     ]
   },
