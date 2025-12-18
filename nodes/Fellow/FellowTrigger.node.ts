@@ -259,10 +259,18 @@ export class FellowTrigger implements INodeType {
 
 		this.logger.debug('[Fellow Trigger] Webhook received', { body });
 
-		// TODO: Implement URL challenge response (PR5)
+		// Handle URL verification challenge from Fellow
+		// When WEBHOOK_VERIFICATION_ENABLED=true, Fellow sends a challenge that must be echoed back
+		if (body.type === 'url_verification' && body.challenge) {
+			this.logger.info('[Fellow Trigger] Responding to URL verification challenge');
+			return {
+				webhookResponse: body.challenge as string,
+			};
+		}
+
 		// TODO: Implement event payload handling (PR6)
 
-		// For now, pass through the raw payload
+		// Pass through the raw payload for normal events
 		return {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
