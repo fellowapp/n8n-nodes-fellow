@@ -8,13 +8,16 @@
 import {
 	FELLOW_API_BASE_URL_PATTERN,
 	FELLOW_SKIP_SSL_VALIDATION,
+	FELLOW_ENVIRONMENT,
 } from './apiConfig';
 
 /**
  * Validates that a subdomain contains only safe characters (alphanumeric and hyphens).
  * Prevents URL injection via characters like /, @, #, etc.
+ * Validation is skipped for dev environment.
  */
 function isValidSubdomain(subdomain: string): boolean {
+	if (FELLOW_ENVIRONMENT === 'dev') return true;
 	return Boolean(subdomain) && /^[a-zA-Z0-9-]+$/.test(subdomain);
 }
 
