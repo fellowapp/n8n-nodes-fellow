@@ -14,6 +14,8 @@ export default [
 			// "eslint.config.js",
 			// "eslint.config.prepublish.js",
 			'**/*.js', // Ignoring JS files as per original config
+			'**/apiConfig.ts', // Generated at build time
+			'**/apiConfig.d.ts', // Type declarations for generated file
 		],
 	},
 

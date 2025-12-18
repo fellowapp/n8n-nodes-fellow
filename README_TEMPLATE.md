@@ -6,13 +6,13 @@ _App/service name_ is _one or two sentences describing the service this node int
 
 [n8n](https://n8n.io/) is a [fair-code licensed](https://docs.n8n.io/reference/license/) workflow automation platform.
 
-[Installation](#installation)  
-[Operations](#operations)  
-[Credentials](#credentials)  <!-- delete if no auth needed -->  
-[Compatibility](#compatibility)  
-[Usage](#usage)  <!-- delete if not using this section -->  
-[Resources](#resources)  
-[Version history](#version-history)  <!-- delete if not using this section -->  
+[Installation](#installation)
+[Operations](#operations)
+[Credentials](#credentials)  <!-- delete if no auth needed -->
+[Compatibility](#compatibility)
+[Usage](#usage)  <!-- delete if not using this section -->
+[Resources](#resources)
+[Version history](#version-history)  <!-- delete if not using this section -->
 
 ## Installation
 
@@ -44,5 +44,3 @@ _By the time users are looking for community nodes, they probably already know n
 ## Version history
 
 _This is another optional section. If your node has multiple versions, include a short description of available versions and what changed, as well as any compatibility impact._
-
-

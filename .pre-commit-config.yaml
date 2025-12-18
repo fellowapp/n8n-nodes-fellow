@@ -1,0 +1,42 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data
+        entry: bash -c 'git diff --staged --name-only --diff-filter=ACM | xargs -r trufflehog filesystem --fail'
+        language: system
+        stages: ['pre-commit']
+        pass_filenames: false
+
+      - id: prettier
+        name: Prettier format check
+        entry: pnpm run format
+        language: system
+        types_or: [javascript, jsx, ts, tsx, json]
+        files: ^(nodes|credentials)/
+        pass_filenames: false
+
+      - id: eslint
+        name: ESLint
+        entry: pnpm run lintfix
+        language: system
+        types: [file]
+        files: ^((nodes|credentials)/.*\.ts|package\.json)$
+        pass_filenames: false
+
+      - id: typescript-check
+        name: TypeScript type check
+        entry: bash -c 'pnpm exec tsc --noEmit'
+        language: system
+        types: [ts]
+        pass_filenames: false

@@ -33,7 +33,11 @@ const SAMPLE_PAYLOADS: Record<string, IDataObject> = {
 			summary: 'This is a sample AI-generated meeting summary for testing purposes.',
 			action_items: [
 				{ id: 'ai-1', title: 'Follow up on project timeline', assignee: 'john@example.com' },
-				{ id: 'ai-2', title: 'Share meeting notes with stakeholders', assignee: 'jane@example.com' },
+				{
+					id: 'ai-2',
+					title: 'Share meeting notes with stakeholders',
+					assignee: 'jane@example.com',
+				},
 			],
 		},
 	},
@@ -167,7 +171,6 @@ export class FellowTrigger implements INodeType {
 				const apiBaseUrl = getFellowApiBaseUrl(subdomain);
 
 				try {
-
 					// Call Fellow Developer API to create the webhook
 					const response = await this.helpers.httpRequestWithAuthentication.call(
 						this,
@@ -206,9 +209,13 @@ export class FellowTrigger implements INodeType {
 					const errorMessage = error instanceof Error ? error.message : String(error);
 					this.logger.error(`[Fellow Trigger] Failed to register webhook: ${errorMessage}`);
 
-					throw new NodeApiError(this.getNode(), { message: errorMessage }, {
-						message: 'Failed to register webhook with Fellow API',
-					});
+					throw new NodeApiError(
+						this.getNode(),
+						{ message: errorMessage },
+						{
+							message: 'Failed to register webhook with Fellow API',
+						},
+					);
 				}
 			},
 
@@ -229,15 +236,11 @@ export class FellowTrigger implements INodeType {
 
 				try {
 					// Call Fellow Developer API to delete the webhook
-					await this.helpers.httpRequestWithAuthentication.call(
-						this,
-						'fellowApi',
-						{
-							method: 'DELETE',
-							url: `${apiBaseUrl}/webhooks/${webhookId}`,
-							skipSslCertificateValidation: shouldSkipSslValidation(),
-						},
-					);
+					await this.helpers.httpRequestWithAuthentication.call(this, 'fellowApi', {
+						method: 'DELETE',
+						url: `${apiBaseUrl}/webhooks/${webhookId}`,
+						skipSslCertificateValidation: shouldSkipSslValidation(),
+					});
 
 					this.logger.info(`[Fellow Trigger] Webhook deleted successfully: ${webhookId}`);
 				} catch (error) {
@@ -283,7 +286,9 @@ export class FellowTrigger implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const event = this.getNodeParameter('event', 0) as string;
 
-		this.logger.info(`[Fellow Trigger] Manual execution - returning sample data for event: ${event}`);
+		this.logger.info(
+			`[Fellow Trigger] Manual execution - returning sample data for event: ${event}`,
+		);
 
 		// Get sample payload for the selected event
 		const samplePayload = SAMPLE_PAYLOADS[event] ?? {
