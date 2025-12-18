@@ -1,0 +1,29 @@
+name: Lint and Format Check
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install flox
+        uses: flox/install-flox-action@819183ecd53757be53d66f492eeb7d689687a66b # 2.1.0
+
+      - name: Install dependencies
+        run: flox activate -- pnpm install --frozen-lockfile
+
+      - name: Run Prettier format check
+        run: flox activate -- pnpm exec prettier --check nodes credentials
+
+      - name: Run ESLint
+        run: flox activate -- pnpm run lint
+
+      - name: Run TypeScript type check
+        run: flox activate -- pnpm exec tsc --noEmit

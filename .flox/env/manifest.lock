@@ -1,0 +1,510 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "nodejs": {
+        "pkg-path": "nodejs",
+        "version": "22.21.1"
+      },
+      "pnpm": {
+        "pkg-path": "pnpm",
+        "pkg-group": "pnpm",
+        "version": "9.15.3"
+      },
+      "pre-commit": {
+        "pkg-path": "pre-commit"
+      },
+      "trufflehog": {
+        "pkg-path": "trufflehog"
+      }
+    },
+    "hook": {
+      "on-activate": "  # Ensure pre-commit hooks are installed\n  if command -v pre-commit &> /dev/null; then\n    pre-commit install\n  fi\n"
+    },
+    "profile": {},
+    "options": {}
+  },
+  "packages": [
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/5f225cvd3l61g5fab2din4kvzfvja6hn-pnpm-9.15.3.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "name": "pnpm-9.15.3",
+      "pname": "pnpm",
+      "rev": "eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "rev_count": 738172,
+      "rev_date": "2025-01-14T19:41:48Z",
+      "scrape_date": "2025-01-16T00:14:48Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "9.15.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/hhprmwazmgvxqff5zpra2bw0cb12f4sl-pnpm-9.15.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "pnpm",
+      "priority": 5
+    },
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/pp1sg4jkgfd9xdbjv1was4m3a5qvxil1-pnpm-9.15.3.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "name": "pnpm-9.15.3",
+      "pname": "pnpm",
+      "rev": "eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "rev_count": 738172,
+      "rev_date": "2025-01-14T19:41:48Z",
+      "scrape_date": "2025-01-16T00:14:48Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "9.15.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/id6m5r3zip98l8g9lyvgwv8bvvnn99hq-pnpm-9.15.3"
+      },
+      "system": "aarch64-linux",
+      "group": "pnpm",
+      "priority": 5
+    },
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/r2b75hhww5m8qdmd4yfyaa6izdahx1ap-pnpm-9.15.3.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "name": "pnpm-9.15.3",
+      "pname": "pnpm",
+      "rev": "eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "rev_count": 738172,
+      "rev_date": "2025-01-14T19:41:48Z",
+      "scrape_date": "2025-01-16T00:14:48Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "9.15.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/4lsfbyj9fl5yf6ar3cfj7vngd5v7rvqg-pnpm-9.15.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "pnpm",
+      "priority": 5
+    },
+    {
+      "attr_path": "pnpm",
+      "broken": false,
+      "derivation": "/nix/store/5r97s3gjbbaazb423y3ccb31ap514q85-pnpm-9.15.3.drv",
+      "description": "Fast, disk space efficient package manager for JavaScript",
+      "install_id": "pnpm",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "name": "pnpm-9.15.3",
+      "pname": "pnpm",
+      "rev": "eb62e6aa39ea67e0b8018ba8ea077efe65807dc8",
+      "rev_count": 738172,
+      "rev_date": "2025-01-14T19:41:48Z",
+      "scrape_date": "2025-01-16T00:14:48Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "9.15.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/p7r1k66dzs1qpkas0jx5v20asih9y37q-pnpm-9.15.3"
+      },
+      "system": "x86_64-linux",
+      "group": "pnpm",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs",
+      "broken": false,
+      "derivation": "/nix/store/b6nmyixm6zh40q8z9ard742zc45gsvvj-nodejs-22.21.1.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "nodejs-22.21.1",
+      "pname": "nodejs",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:01:53.853012Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "22.21.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/bkir3agnj2cvpx80a0z1lj50pg2dhddi-nodejs-22.21.1-dev",
+        "libv8": "/nix/store/ivbmw7d10pxzkrz5397bimhqwwlrc8gp-nodejs-22.21.1-libv8",
+        "out": "/nix/store/92igwjsd6av0pg8dvygirhdwahwq2sh7-nodejs-22.21.1"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs",
+      "broken": false,
+      "derivation": "/nix/store/0p9prqzawqq12nlikh74h19fvj4dinbw-nodejs-22.21.1.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "nodejs-22.21.1",
+      "pname": "nodejs",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:18:11.966063Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "22.21.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/1akvaqvrp0cf6pd7mkqy7m3gnzc3wfd7-nodejs-22.21.1-dev",
+        "libv8": "/nix/store/ykj9hi9qv7gwxnbg2vh6ca00w9zsbhm0-nodejs-22.21.1-libv8",
+        "out": "/nix/store/hps7k16bd9isj7pfsjzg7q0wgvrw47kn-nodejs-22.21.1"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs",
+      "broken": false,
+      "derivation": "/nix/store/xack7adxihp8qpkw7jbi9ijyd719jgcf-nodejs-22.21.1.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "nodejs-22.21.1",
+      "pname": "nodejs",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:34:11.110610Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "22.21.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/haa4773lz7wfhnql05181azh4z5141r7-nodejs-22.21.1-dev",
+        "libv8": "/nix/store/0pswqdxlx8y0v54gq0ixwps19agv6bds-nodejs-22.21.1-libv8",
+        "out": "/nix/store/wfjyiwara336j7r1v0ia3kib8779wzwf-nodejs-22.21.1"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs",
+      "broken": false,
+      "derivation": "/nix/store/x7l14pwk117wlpy6l6vczlx7wbaf2ip0-nodejs-22.21.1.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "nodejs-22.21.1",
+      "pname": "nodejs",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:50:36.761042Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "22.21.1",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/l1idqv7ff0m2kbcqnn1yr415wyga1wxf-nodejs-22.21.1-dev",
+        "libv8": "/nix/store/farc7vk89kr367hsx0qchmahf6i6sbk1-nodejs-22.21.1-libv8",
+        "out": "/nix/store/l85fis49agvp5q1ild1rfh4rrgmn92sr-nodejs-22.21.1"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/8cbj3rml2glj0rf469zvnjfq48f80j2a-pre-commit-4.5.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "pre-commit-4.5.0",
+      "pname": "pre-commit",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:02:09.511889Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/1laiwl4i8f23d7faqvxbcq954sxy247j-pre-commit-4.5.0-dist",
+        "out": "/nix/store/kbsd895yi5zzlnnyzlb314kqzkjcxirm-pre-commit-4.5.0"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/ixc6nkl9mgkyaknqxx57l0aqg8rr19k9-pre-commit-4.5.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "pre-commit-4.5.0",
+      "pname": "pre-commit",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:18:33.747536Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/7pwsavmn3fwpc06b88lxavlhjmmrp0jl-pre-commit-4.5.0-dist",
+        "out": "/nix/store/9wcnpjj79915r15cgahl7s9kz9s1d6cz-pre-commit-4.5.0"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/yzcczcd95h0jdd9niz66d9hkghcpfrhw-pre-commit-4.5.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "pre-commit-4.5.0",
+      "pname": "pre-commit",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:34:26.483219Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/pzkk3zs6wgq0d1dsm3ri24hxp7c81h1h-pre-commit-4.5.0-dist",
+        "out": "/nix/store/vkbhfi3vphnas6347gbxsdh8pwnj5cl6-pre-commit-4.5.0"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "pre-commit",
+      "broken": false,
+      "derivation": "/nix/store/n4kj8m9fr6gyf4ag5qjlciq6hp0dgzfy-pre-commit-4.5.0.drv",
+      "description": "Framework for managing and maintaining multi-language pre-commit hooks",
+      "install_id": "pre-commit",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "pre-commit-4.5.0",
+      "pname": "pre-commit",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:50:59.794857Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "4.5.0",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dist": "/nix/store/n6dxcjwniqcgp9vqnypi82057brqz24w-pre-commit-4.5.0-dist",
+        "out": "/nix/store/hhzpwcr2r29603ygc147wr58vlkf4qv5-pre-commit-4.5.0"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "trufflehog",
+      "broken": false,
+      "derivation": "/nix/store/3pxzxn5gasksrvilp0g8klw8w5vg7qwk-trufflehog-3.92.3.drv",
+      "description": "Find credentials all over the place",
+      "install_id": "trufflehog",
+      "license": "[ AGPL-3.0-only ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "trufflehog-3.92.3",
+      "pname": "trufflehog",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:03:41.688746Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.92.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/9d8280svi799r10xsx5c4xj8pcd22qzh-trufflehog-3.92.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "trufflehog",
+      "broken": false,
+      "derivation": "/nix/store/kg87p3vxg43rrq6n7aiss0bj85mkpdd7-trufflehog-3.92.3.drv",
+      "description": "Find credentials all over the place",
+      "install_id": "trufflehog",
+      "license": "[ AGPL-3.0-only ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "trufflehog-3.92.3",
+      "pname": "trufflehog",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:20:31.970025Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.92.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/94sjgpn471l0hvxqcc1bp2xkp5xsxbkj-trufflehog-3.92.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "trufflehog",
+      "broken": false,
+      "derivation": "/nix/store/8yrh6n5mc7ps0qqlz6fm1lkq286v5a49-trufflehog-3.92.3.drv",
+      "description": "Find credentials all over the place",
+      "install_id": "trufflehog",
+      "license": "[ AGPL-3.0-only ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "trufflehog-3.92.3",
+      "pname": "trufflehog",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:35:59.879286Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.92.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/9x9m0z49ysrlxvdqin9g3zxwbayc0sfj-trufflehog-3.92.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "trufflehog",
+      "broken": false,
+      "derivation": "/nix/store/406qf3j7js8pllx1ffbh60009x1nl61k-trufflehog-3.92.3.drv",
+      "description": "Find credentials all over the place",
+      "install_id": "trufflehog",
+      "license": "[ AGPL-3.0-only ]",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "name": "trufflehog-3.92.3",
+      "pname": "trufflehog",
+      "rev": "1306659b587dc277866c7b69eb97e5f07864d8c4",
+      "rev_count": 912002,
+      "rev_date": "2025-12-15T06:20:37Z",
+      "scrape_date": "2025-12-16T03:53:01.790733Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.92.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/2b98sg7xix3bfy6k31k94mjb4kmmmg27-trufflehog-3.92.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}
