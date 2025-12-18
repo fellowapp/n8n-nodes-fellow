@@ -73,7 +73,7 @@ jobs:
 
             **Source:**
             - Repository: `fellowapp/n8n-nodes-fellow`
-            - Commit: `${{ github.sha }}`
+            - Commit: `${{ github.event.workflow_run.head_sha }}`
             - Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             ---
