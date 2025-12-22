@@ -1,0 +1,53 @@
+name: Publish Staging Package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # 6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Install flox
+        uses: flox/install-flox-action@819183ecd53757be53d66f492eeb7d689687a66b # 2.1.0
+
+      - name: Install dependencies
+        run: flox activate -- pnpm install --frozen-lockfile
+
+      - name: Build Staging Package
+        run: flox activate -- pnpm run build:staging
+
+      - name: Get package version from package.json
+        id: package_version
+        run: echo "version=$(flox activate -- node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+      - name: Get short SHA
+        id: sha
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create unique staging version string
+        id: staging_version
+        run: echo "version_string=${{ steps.package_version.outputs.version }}-staging.${{ steps.sha.outputs.short_sha }}" >> $GITHUB_OUTPUT
+
+      - name: Update package.json for Staging (Name and Version)
+        run: |
+          sed -i.bak 's/"name": "@fellowapp\/n8n-nodes-fellow"/"name": "@fellowapp\/n8n-nodes-fellow-staging"/' package.json && rm package.json.bak
+          flox activate -- pnpm version ${{ steps.staging_version.outputs.version_string }} --no-git-tag-version --allow-same-version
+        shell: bash
+
+      - name: Publish Staging Package (@fellowapp/n8n-nodes-fellow-staging)
+        run: flox activate -- pnpm publish --access restricted --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Revert package.json changes
+        run: git checkout -- package.json
