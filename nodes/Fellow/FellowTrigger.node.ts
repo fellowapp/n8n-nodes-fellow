@@ -1,8 +1,6 @@
 import {
 	IHookFunctions,
 	IWebhookFunctions,
-	INodeExecutionData,
-	IExecuteFunctions,
 	IDataObject,
 	INodeType,
 	INodeTypeDescription,
@@ -19,69 +17,6 @@ const EVENT_DESCRIPTIONS: Record<string, string> = {
 	'action_item.assigned': 'Action Item Assigned',
 	'action_item.completed': 'Action Item Completed',
 };
-
-// Sample payloads for manual testing (execute method)
-const SAMPLE_PAYLOADS: Record<string, IDataObject> = {
-	'ai_note.generated': {
-		event: 'ai_note.generated',
-		timestamp: new Date().toISOString(),
-		data: {
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-			note_id: 'sample-note-456',
-			generated_at: new Date().toISOString(),
-			summary: 'This is a sample AI-generated meeting summary for testing purposes.',
-			action_items: [
-				{ id: 'ai-1', title: 'Follow up on project timeline', assignee: 'john@example.com' },
-				{
-					id: 'ai-2',
-					title: 'Share meeting notes with stakeholders',
-					assignee: 'jane@example.com',
-				},
-			],
-		},
-	},
-	'ai_note.shared_to_channel': {
-		event: 'ai_note.shared_to_channel',
-		timestamp: new Date().toISOString(),
-		data: {
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-			note_id: 'sample-note-456',
-			channel_id: 'sample-channel-789',
-			channel_name: 'Engineering Team',
-			shared_by: 'john@example.com',
-			shared_at: new Date().toISOString(),
-		},
-	},
-	'action_item.assigned': {
-		event: 'action_item.assigned',
-		timestamp: new Date().toISOString(),
-		data: {
-			action_item_id: 'sample-action-123',
-			title: 'Review PR for new feature',
-			description: 'Please review and approve the pull request for the dashboard update.',
-			assignee: 'jane@example.com',
-			assigned_by: 'john@example.com',
-			due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-		},
-	},
-	'action_item.completed': {
-		event: 'action_item.completed',
-		timestamp: new Date().toISOString(),
-		data: {
-			action_item_id: 'sample-action-123',
-			title: 'Review PR for new feature',
-			completed_by: 'jane@example.com',
-			completed_at: new Date().toISOString(),
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-		},
-	},
-};
-
 export class FellowTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Fellow Trigger',
@@ -277,26 +212,5 @@ export class FellowTrigger implements INodeType {
 		return {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
-	}
-
-	/**
-	 * Execute method for manual testing.
-	 * Returns sample data based on the selected event type.
-	 */
-	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const event = this.getNodeParameter('event', 0) as string;
-
-		this.logger.info(
-			`[Fellow Trigger] Manual execution - returning sample data for event: ${event}`,
-		);
-
-		// Get sample payload for the selected event
-		const samplePayload = SAMPLE_PAYLOADS[event] ?? {
-			event,
-			timestamp: new Date().toISOString(),
-			data: { message: 'Sample payload for testing' },
-		};
-
-		return [this.helpers.returnJsonArray([samplePayload])];
 	}
 }
