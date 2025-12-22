@@ -57,7 +57,7 @@ const content = `/**
 
 export const FELLOW_API_BASE_URL_PATTERN = '${config.baseUrlPattern}';
 export const FELLOW_SKIP_SSL_VALIDATION = ${config.skipSslValidation};
-export const FELLOW_ENVIRONMENT = '${environment}';
+export const FELLOW_ENVIRONMENT: 'dev' | 'staging' | 'prod' = '${environment}';
 `;
 
 const outputPath = path.join(__dirname, '../nodes/Fellow/apiConfig.ts');
