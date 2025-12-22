@@ -1,8 +1,7 @@
+import * as crypto from 'crypto';
 import {
 	IHookFunctions,
 	IWebhookFunctions,
-	INodeExecutionData,
-	IExecuteFunctions,
 	IDataObject,
 	INodeType,
 	INodeTypeDescription,
@@ -12,74 +11,46 @@ import {
 
 import { getFellowApiBaseUrl, shouldSkipSslValidation } from './config';
 
+/**
+ * Verify Svix webhook signature.
+ * Svix uses HMAC-SHA256 with a base64-encoded secret prefixed with "whsec_".
+ */
+function verifySvixSignature(
+	secret: string,
+	msgId: string,
+	msgTimestamp: string,
+	body: string,
+	signatures: string,
+): boolean {
+	// Extract the base64 secret (remove "whsec_" prefix)
+	const secretBase64 = secret.startsWith('whsec_') ? secret.slice(6) : secret;
+	const secretBytes = Buffer.from(secretBase64, 'base64');
+
+	// Build the signed content: "{msg_id}.{timestamp}.{body}"
+	const signedContent = `${msgId}.${msgTimestamp}.${body}`;
+
+	// Compute expected signature
+	const expectedSignature = crypto
+		.createHmac('sha256', secretBytes)
+		.update(signedContent)
+		.digest('base64');
+
+	// Parse signatures from header (format: "v1,sig1 v1,sig2")
+	const providedSignatures = signatures.split(' ').map((s) => {
+		const parts = s.split(',');
+		return parts.length === 2 ? parts[1] : '';
+	});
+
+	// Check if any signature matches
+	return providedSignatures.some((sig) => sig === expectedSignature);
+}
+
 // Human-readable event names for webhook descriptions
 const EVENT_DESCRIPTIONS: Record<string, string> = {
 	'ai_note.generated': 'AI Note Generated',
 	'ai_note.shared_to_channel': 'AI Note Shared to Channel',
 	'action_item.assigned': 'Action Item Assigned',
 	'action_item.completed': 'Action Item Completed',
-};
-
-// Sample payloads for manual testing (execute method)
-const SAMPLE_PAYLOADS: Record<string, IDataObject> = {
-	'ai_note.generated': {
-		event: 'ai_note.generated',
-		timestamp: new Date().toISOString(),
-		data: {
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-			note_id: 'sample-note-456',
-			generated_at: new Date().toISOString(),
-			summary: 'This is a sample AI-generated meeting summary for testing purposes.',
-			action_items: [
-				{ id: 'ai-1', title: 'Follow up on project timeline', assignee: 'john@example.com' },
-				{
-					id: 'ai-2',
-					title: 'Share meeting notes with stakeholders',
-					assignee: 'jane@example.com',
-				},
-			],
-		},
-	},
-	'ai_note.shared_to_channel': {
-		event: 'ai_note.shared_to_channel',
-		timestamp: new Date().toISOString(),
-		data: {
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-			note_id: 'sample-note-456',
-			channel_id: 'sample-channel-789',
-			channel_name: 'Engineering Team',
-			shared_by: 'john@example.com',
-			shared_at: new Date().toISOString(),
-		},
-	},
-	'action_item.assigned': {
-		event: 'action_item.assigned',
-		timestamp: new Date().toISOString(),
-		data: {
-			action_item_id: 'sample-action-123',
-			title: 'Review PR for new feature',
-			description: 'Please review and approve the pull request for the dashboard update.',
-			assignee: 'jane@example.com',
-			assigned_by: 'john@example.com',
-			due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-		},
-	},
-	'action_item.completed': {
-		event: 'action_item.completed',
-		timestamp: new Date().toISOString(),
-		data: {
-			action_item_id: 'sample-action-123',
-			title: 'Review PR for new feature',
-			completed_by: 'jane@example.com',
-			completed_at: new Date().toISOString(),
-			meeting_id: 'sample-meeting-123',
-			meeting_title: 'Weekly Team Sync',
-		},
-	},
 };
 
 export class FellowTrigger implements INodeType {
@@ -192,15 +163,23 @@ export class FellowTrigger implements INodeType {
 						},
 					);
 
-					// Extract the webhook ID from the response
+					// Extract the webhook ID and secret from the response
+					// API returns: { webhook: { id: "...", secret: "whsec_..." } }
 					const webhookId = response?.webhook?.id;
+					const webhookSecret = response?.webhook?.secret;
 					if (!webhookId) {
 						throw new Error('Fellow API did not return a webhook ID');
 					}
 
-					// Store the webhook ID for later cleanup
+					// Store the webhook ID and secret for later use
 					const staticData = this.getWorkflowStaticData('node');
 					staticData.webhookId = webhookId;
+					if (webhookSecret) {
+						staticData.webhookSecret = webhookSecret;
+						this.logger.info(`[Fellow Trigger] Webhook secret stored successfully`);
+					} else {
+						this.logger.warn(`[Fellow Trigger] No webhook secret returned from API`);
+					}
 
 					this.logger.info(`[Fellow Trigger] Webhook registered successfully: ${webhookId}`);
 
@@ -251,6 +230,7 @@ export class FellowTrigger implements INodeType {
 				}
 
 				delete staticData.webhookId;
+				delete staticData.webhookSecret;
 
 				return true;
 			},
@@ -258,9 +238,11 @@ export class FellowTrigger implements INodeType {
 	};
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
+		const req = this.getRequestObject();
 		const body = this.getBodyData() as IDataObject;
 
-		this.logger.debug('[Fellow Trigger] Webhook received', { body });
+		this.logger.info('[Fellow Trigger] >>> WEBHOOK METHOD CALLED <<<');
+		this.logger.info(`[Fellow Trigger] Body: ${JSON.stringify(body).substring(0, 200)}`);
 
 		// Handle URL verification challenge from Fellow
 		// When WEBHOOK_VERIFICATION_ENABLED=true, Fellow sends a challenge that must be echoed back
@@ -271,32 +253,53 @@ export class FellowTrigger implements INodeType {
 			};
 		}
 
-		// TODO: Implement event payload handling (PR6)
+		// Get Svix headers for signature verification
+		const svixId = req.headers['svix-id'] as string | undefined;
+		const svixTimestamp = req.headers['svix-timestamp'] as string | undefined;
+		const svixSignature = req.headers['svix-signature'] as string | undefined;
+
+		// Get the stored webhook secret
+		const staticData = this.getWorkflowStaticData('node');
+		const webhookSecret = staticData.webhookSecret as string | undefined;
+
+		// Verify signature if we have a secret and Svix headers
+		if (webhookSecret && svixId && svixTimestamp && svixSignature) {
+			// Get raw body for signature verification
+			let rawBody: string;
+			if (req.rawBody) {
+				rawBody = Buffer.isBuffer(req.rawBody) ? req.rawBody.toString('utf8') : String(req.rawBody);
+			} else {
+				rawBody = JSON.stringify(body);
+			}
+
+			const isValid = verifySvixSignature(
+				webhookSecret,
+				svixId,
+				svixTimestamp,
+				rawBody,
+				svixSignature,
+			);
+
+			if (!isValid) {
+				this.logger.error('[Fellow Trigger] Invalid webhook signature - rejecting request');
+				return {
+					webhookResponse: 'Unauthorized',
+					noWebhookResponse: true,
+				};
+			}
+
+			this.logger.info('[Fellow Trigger] Signature verified successfully');
+		} else if (!webhookSecret) {
+			this.logger.warn(
+				'[Fellow Trigger] No webhook secret stored - skipping signature verification',
+			);
+		} else {
+			this.logger.warn('[Fellow Trigger] Missing Svix headers - skipping signature verification');
+		}
 
 		// Pass through the raw payload for normal events
 		return {
 			workflowData: [this.helpers.returnJsonArray([body])],
 		};
-	}
-
-	/**
-	 * Execute method for manual testing.
-	 * Returns sample data based on the selected event type.
-	 */
-	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
-		const event = this.getNodeParameter('event', 0) as string;
-
-		this.logger.info(
-			`[Fellow Trigger] Manual execution - returning sample data for event: ${event}`,
-		);
-
-		// Get sample payload for the selected event
-		const samplePayload = SAMPLE_PAYLOADS[event] ?? {
-			event,
-			timestamp: new Date().toISOString(),
-			data: { message: 'Sample payload for testing' },
-		};
-
-		return [this.helpers.returnJsonArray([samplePayload])];
 	}
 }
