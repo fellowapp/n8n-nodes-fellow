@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # 6.0.1
         with:
           fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -33,9 +34,15 @@ jobs:
       - name: Build Staging Package
         run: flox activate -- pnpm run build:staging
 
-      - name: Get package version from package.json
+      - name: Get latest version from git tags
         id: package_version
-        run: echo "version=$(flox activate -- node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        run: |
+          # Get all tags, filter for semantic versions (with or without 'v' prefix), sort, get latest
+          LATEST_TAG=$(git tag -l | grep -E '^v?[0-9]+\.[0-9]+\.[0-9]+' | sed 's/^v//' | sort -V | tail -n 1)
+          # Default to 0.1.0 if no tags found
+          VERSION=${LATEST_TAG:-0.1.0}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: $VERSION"
 
       - name: Get short SHA
         id: sha
@@ -43,7 +50,7 @@ jobs:
 
       - name: Create unique staging version string
         id: staging_version
-        run: echo "version_string=${{ steps.package_version.outputs.version }}-staging.${{ steps.sha.outputs.short_sha }}" >> $GITHUB_OUTPUT
+        run: echo "version_string=${{ steps.package_version.outputs.version }}-main.${{ steps.sha.outputs.short_sha }}-staging" >> $GITHUB_OUTPUT
 
       - name: Update package.json for Staging (Name and Version)
         run: |
