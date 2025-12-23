@@ -245,12 +245,20 @@ export class FellowTrigger implements INodeType {
 			};
 		}
 
+		// Verify raw body is available - required for signature verification
+		// Svix signs the exact raw HTTP body bytes, so we cannot fallback to JSON.stringify
+		if (!req.rawBody) {
+			this.logger.error('[Fellow Trigger] Raw body unavailable - cannot verify signature');
+			return {
+				webhookResponse: 'Bad Request',
+				noWebhookResponse: true,
+			};
+		}
+
 		// Get raw body for signature verification
-		const rawBody = req.rawBody
-			? Buffer.isBuffer(req.rawBody)
-				? req.rawBody.toString('utf8')
-				: String(req.rawBody)
-			: JSON.stringify(body);
+		const rawBody = Buffer.isBuffer(req.rawBody)
+			? req.rawBody.toString('utf8')
+			: String(req.rawBody);
 
 		const isValid = verifySvixSignature(
 			webhookSecret,

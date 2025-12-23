@@ -23,7 +23,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('accepts valid signature with whsec_ prefix', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'ai_note.generated', data: { note_id: '123' } });
 			const signature = generateValidSignature(secret, msgId, timestamp, body);
 
@@ -35,7 +35,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('accepts valid signature without whsec_ prefix', () => {
 			const secret = Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'ai_note.generated', data: { note_id: '123' } });
 			const signature = generateValidSignature(secret, msgId, timestamp, body);
 
@@ -47,7 +47,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('accepts valid signature with complex body', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_complex_123';
-			const timestamp = '1700000000';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({
 				type: 'action_item.assigned',
 				data: {
@@ -71,7 +71,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('accepts signature with multiple signatures in header (uses first)', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const validSignature = generateValidSignature(secret, msgId, timestamp, body);
 			const multiSignature = `${validSignature} v1,fake_second_signature`;
@@ -87,7 +87,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 			const correctSecret = 'whsec_' + Buffer.from('correct-secret').toString('base64');
 			const wrongSecret = 'whsec_' + Buffer.from('wrong-secret').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const signature = generateValidSignature(wrongSecret, msgId, timestamp, body);
 
@@ -99,7 +99,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('rejects signature with tampered body', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const originalBody = JSON.stringify({ type: 'test', value: 'original' });
 			const tamperedBody = JSON.stringify({ type: 'test', value: 'tampered' });
 			const signature = generateValidSignature(secret, msgId, timestamp, originalBody);
@@ -113,7 +113,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const correctMsgId = 'msg_12345';
 			const wrongMsgId = 'msg_67890';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const signature = generateValidSignature(secret, correctMsgId, timestamp, body);
 
@@ -125,8 +125,8 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('rejects signature with wrong timestamp', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const correctTimestamp = '1234567890';
-			const wrongTimestamp = '9999999999';
+			const correctTimestamp = Math.floor(Date.now() / 1000).toString();
+			const wrongTimestamp = (Math.floor(Date.now() / 1000) + 100).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const signature = generateValidSignature(secret, msgId, correctTimestamp, body);
 
@@ -138,7 +138,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('rejects completely invalid signature format', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const invalidSignature = 'v1,not_a_valid_base64_signature!@#$';
 
@@ -150,7 +150,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('rejects empty signature', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 
 			const result = verifySvixSignature(secret, msgId, timestamp, body, 'v1,');
@@ -163,7 +163,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('handles empty body string', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = '';
 			const signature = generateValidSignature(secret, msgId, timestamp, body);
 
@@ -175,7 +175,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('handles body with unicode characters', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ emoji: '🎉', chinese: '你好', arabic: 'مرحبا' });
 			const signature = generateValidSignature(secret, msgId, timestamp, body);
 
@@ -187,16 +187,90 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		it('handles very long body payload', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
-			const timestamp = '1234567890';
+			const currentTimestamp = Math.floor(Date.now() / 1000).toString();
 			const largeData = Array(1000)
 				.fill(null)
 				.map((_, i) => ({ id: i, value: `item_${i}` }));
 			const body = JSON.stringify({ type: 'bulk_operation', data: largeData });
-			const signature = generateValidSignature(secret, msgId, timestamp, body);
+			const signature = generateValidSignature(secret, msgId, currentTimestamp, body);
 
-			const result = verifySvixSignature(secret, msgId, timestamp, body, signature);
+			const result = verifySvixSignature(secret, msgId, currentTimestamp, body, signature);
 
 			expect(result).toBe(true);
+		});
+	});
+
+	describe('timestamp validation (replay attack prevention)', () => {
+		it('accepts webhooks with current timestamp', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const currentTimestamp = Math.floor(Date.now() / 1000).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, currentTimestamp, body);
+
+			const result = verifySvixSignature(secret, msgId, currentTimestamp, body, signature);
+
+			expect(result).toBe(true);
+		});
+
+		it('accepts webhooks within 5 minute tolerance window', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const fourMinutesAgo = (Math.floor(Date.now() / 1000) - 240).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, fourMinutesAgo, body);
+
+			const result = verifySvixSignature(secret, msgId, fourMinutesAgo, body, signature);
+
+			expect(result).toBe(true);
+		});
+
+		it('rejects webhooks older than 5 minutes (replay attack)', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const sixMinutesAgo = (Math.floor(Date.now() / 1000) - 360).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, sixMinutesAgo, body);
+
+			const result = verifySvixSignature(secret, msgId, sixMinutesAgo, body, signature);
+
+			expect(result).toBe(false);
+		});
+
+		it('rejects webhooks with timestamp too far in the future', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const sixMinutesInFuture = (Math.floor(Date.now() / 1000) + 360).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, sixMinutesInFuture, body);
+
+			const result = verifySvixSignature(secret, msgId, sixMinutesInFuture, body, signature);
+
+			expect(result).toBe(false);
+		});
+
+		it('rejects webhooks with invalid timestamp format', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const invalidTimestamp = 'not-a-number';
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, invalidTimestamp, body);
+
+			const result = verifySvixSignature(secret, msgId, invalidTimestamp, body, signature);
+
+			expect(result).toBe(false);
+		});
+
+		it('rejects webhooks with empty timestamp', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const emptyTimestamp = '';
+			const body = JSON.stringify({ type: 'test' });
+			const signature = generateValidSignature(secret, msgId, emptyTimestamp, body);
+
+			const result = verifySvixSignature(secret, msgId, emptyTimestamp, body, signature);
+
+			expect(result).toBe(false);
 		});
 	});
 });

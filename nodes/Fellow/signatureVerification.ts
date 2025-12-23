@@ -1,8 +1,12 @@
 import * as crypto from 'crypto';
 
+// Maximum age of a webhook in seconds (5 minutes) to prevent replay attacks
+const WEBHOOK_TOLERANCE_SECONDS = 300;
+
 /**
- * Verify Svix webhook signature.
+ * Verify Svix webhook signature and timestamp.
  * Svix uses HMAC-SHA256 with a base64-encoded secret prefixed with "whsec_".
+ * Rejects webhooks older than 5 minutes to prevent replay attacks.
  */
 export function verifySvixSignature(
 	secret: string,
@@ -11,6 +15,20 @@ export function verifySvixSignature(
 	body: string,
 	signatures: string,
 ): boolean {
+	// Validate timestamp to prevent replay attacks
+	const timestampSeconds = parseInt(msgTimestamp, 10);
+	if (isNaN(timestampSeconds)) {
+		return false;
+	}
+
+	const currentTimeSeconds = Math.floor(Date.now() / 1000);
+	const timeDifference = currentTimeSeconds - timestampSeconds;
+
+	// Reject if timestamp is too old (replay attack) or too far in the future
+	if (timeDifference > WEBHOOK_TOLERANCE_SECONDS || timeDifference < -WEBHOOK_TOLERANCE_SECONDS) {
+		return false;
+	}
+
 	// Extract the base64 secret (remove "whsec_" prefix)
 	const secretBase64 = secret.startsWith('whsec_') ? secret.slice(6) : secret;
 	const secretBytes = Buffer.from(secretBase64, 'base64');
