@@ -30,7 +30,10 @@
     "dev": "node scripts/generateConfig.js dev && tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
-    "lintfix": "eslint nodes credentials --fix"
+    "lintfix": "eslint nodes credentials --fix",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -52,13 +55,15 @@
     "@eslint/js": "^9.25.1",
     "@types/node": "^22.15.3",
     "@typescript-eslint/parser": "^8.31.1",
+    "@vitest/coverage-v8": "^2.1.8",
     "cross-env": "^7.0.3",
     "eslint": "^9.25.1",
     "eslint-plugin-n8n-nodes-base": "^1.16.3",
     "globals": "^16.0.0",
     "gulp": "^5.0.0",
     "prettier": "^3.5.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^2.1.8"
   },
   "peerDependencies": {
     "n8n-workflow": "*"

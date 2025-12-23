@@ -9,6 +9,7 @@ import {
 } from 'n8n-workflow';
 
 import { getFellowApiBaseUrl, shouldSkipSslValidation } from './config';
+import { verifySvixSignature } from './signatureVerification';
 
 // Human-readable event names for webhook descriptions
 const EVENT_DESCRIPTIONS: Record<string, string> = {
@@ -17,6 +18,7 @@ const EVENT_DESCRIPTIONS: Record<string, string> = {
 	'action_item.assigned': 'Action Item Assigned',
 	'action_item.completed': 'Action Item Completed',
 };
+
 export class FellowTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Fellow Trigger',
@@ -127,15 +129,18 @@ export class FellowTrigger implements INodeType {
 						},
 					);
 
-					// Extract the webhook ID from the response
+					// Extract the webhook ID and secret from the response
+					// API returns: { webhook: { id: "...", secret: "whsec_..." } }
 					const webhookId = response?.webhook?.id;
-					if (!webhookId) {
-						throw new Error('Fellow API did not return a webhook ID');
+					const webhookSecret = response?.webhook?.secret;
+					if (!webhookId || !webhookSecret) {
+						throw new Error('Fellow API did not return a webhook ID or secret');
 					}
 
-					// Store the webhook ID for later cleanup
+					// Store the webhook ID and secret for later use
 					const staticData = this.getWorkflowStaticData('node');
 					staticData.webhookId = webhookId;
+					staticData.webhookSecret = webhookSecret;
 
 					this.logger.info(`[Fellow Trigger] Webhook registered successfully: ${webhookId}`);
 
@@ -186,6 +191,7 @@ export class FellowTrigger implements INodeType {
 				}
 
 				delete staticData.webhookId;
+				delete staticData.webhookSecret;
 
 				return true;
 			},
@@ -193,9 +199,8 @@ export class FellowTrigger implements INodeType {
 	};
 
 	async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
+		const req = this.getRequestObject();
 		const body = this.getBodyData() as IDataObject;
-
-		this.logger.debug('[Fellow Trigger] Webhook received', { body });
 
 		// Handle URL verification challenge from Fellow
 		// When WEBHOOK_VERIFICATION_ENABLED=true, Fellow sends a challenge that must be echoed back
@@ -206,7 +211,64 @@ export class FellowTrigger implements INodeType {
 			};
 		}
 
-		// TODO: Implement event payload handling (PR6)
+		// Get Svix headers for signature verification
+		const svixId = req.headers['svix-id'] as string | undefined;
+		const svixTimestamp = req.headers['svix-timestamp'] as string | undefined;
+		const svixSignature = req.headers['svix-signature'] as string | undefined;
+
+		// Get the stored webhook secret
+		const staticData = this.getWorkflowStaticData('node');
+		const webhookSecret = staticData.webhookSecret as string | undefined;
+
+		// Verify webhook signature using guard clauses
+		if (!webhookSecret) {
+			this.logger.warn('[Fellow Trigger] No webhook secret stored - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
+		}
+
+		if (!svixId || !svixTimestamp || !svixSignature) {
+			this.logger.warn('[Fellow Trigger] Missing Svix headers - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
+		}
+
+		// Verify raw body is available - required for signature verification
+		// Svix signs the exact raw HTTP body bytes, so we cannot fallback to JSON.stringify
+		if (!req.rawBody) {
+			this.logger.error('[Fellow Trigger] Raw body unavailable - cannot verify signature');
+			return {
+				webhookResponse: 'Bad Request',
+				noWebhookResponse: true,
+			};
+		}
+
+		// Get raw body for signature verification
+		const rawBody = Buffer.isBuffer(req.rawBody)
+			? req.rawBody.toString('utf8')
+			: String(req.rawBody);
+
+		const isValid = verifySvixSignature(
+			webhookSecret,
+			svixId,
+			svixTimestamp,
+			rawBody,
+			svixSignature,
+		);
+
+		if (!isValid) {
+			this.logger.error('[Fellow Trigger] Invalid webhook signature - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
+		}
+
+		this.logger.info('[Fellow Trigger] Signature verified successfully');
 
 		// Pass through the raw payload for normal events
 		return {
