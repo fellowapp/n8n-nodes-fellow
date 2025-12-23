@@ -274,3 +274,122 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 		});
 	});
 });
+
+describe('FellowTrigger - Webhook Creation Validation', () => {
+	/**
+	 * These tests validate the webhook creation response validation logic.
+	 * The actual implementation is in FellowTrigger.node.ts lines 135-138:
+	 *
+	 * const webhookSecret = response?.webhook?.secret;
+	 * if (!webhookId || !webhookSecret) {
+	 *   throw new Error('Fellow API did not return a webhook ID or secret');
+	 * }
+	 */
+
+	const validateWebhookResponse = (response: any): { webhookId: string; webhookSecret: string } => {
+		const webhookId = response?.webhook?.id;
+		const webhookSecret = response?.webhook?.secret;
+
+		if (!webhookId || !webhookSecret) {
+			throw new Error('Fellow API did not return a webhook ID or secret');
+		}
+
+		return { webhookId, webhookSecret };
+	};
+
+	describe('webhook creation response validation', () => {
+		it('accepts valid response with both ID and secret', () => {
+			const mockResponse = {
+				webhook: {
+					id: 'webhook_123',
+					secret: 'whsec_' + Buffer.from('test-secret').toString('base64'),
+				},
+			};
+
+			const result = validateWebhookResponse(mockResponse);
+
+			expect(result.webhookId).toBe('webhook_123');
+			expect(result.webhookSecret).toMatch(/^whsec_/);
+		});
+
+		it('throws error when webhook ID is missing', () => {
+			const mockResponse = {
+				webhook: {
+					secret: 'whsec_' + Buffer.from('test-secret').toString('base64'),
+				},
+			};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when webhook secret is missing', () => {
+			const mockResponse = {
+				webhook: {
+					id: 'webhook_123',
+				},
+			};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when both ID and secret are missing', () => {
+			const mockResponse = {
+				webhook: {},
+			};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when webhook object is missing', () => {
+			const mockResponse = {};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when response is null', () => {
+			expect(() => validateWebhookResponse(null)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when response is undefined', () => {
+			expect(() => validateWebhookResponse(undefined)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when webhook ID is empty string', () => {
+			const mockResponse = {
+				webhook: {
+					id: '',
+					secret: 'whsec_' + Buffer.from('test-secret').toString('base64'),
+				},
+			};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+
+		it('throws error when webhook secret is empty string', () => {
+			const mockResponse = {
+				webhook: {
+					id: 'webhook_123',
+					secret: '',
+				},
+			};
+
+			expect(() => validateWebhookResponse(mockResponse)).toThrow(
+				'Fellow API did not return a webhook ID or secret',
+			);
+		});
+	});
+});

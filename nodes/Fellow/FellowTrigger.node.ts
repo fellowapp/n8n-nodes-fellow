@@ -133,19 +133,14 @@ export class FellowTrigger implements INodeType {
 					// API returns: { webhook: { id: "...", secret: "whsec_..." } }
 					const webhookId = response?.webhook?.id;
 					const webhookSecret = response?.webhook?.secret;
-					if (!webhookId) {
-						throw new Error('Fellow API did not return a webhook ID');
+					if (!webhookId || !webhookSecret) {
+						throw new Error('Fellow API did not return a webhook ID or secret');
 					}
 
 					// Store the webhook ID and secret for later use
 					const staticData = this.getWorkflowStaticData('node');
 					staticData.webhookId = webhookId;
-					if (webhookSecret) {
-						staticData.webhookSecret = webhookSecret;
-						this.logger.info(`[Fellow Trigger] Webhook secret stored successfully`);
-					} else {
-						this.logger.warn(`[Fellow Trigger] No webhook secret returned from API`);
-					}
+					staticData.webhookSecret = webhookSecret;
 
 					this.logger.info(`[Fellow Trigger] Webhook registered successfully: ${webhookId}`);
 
