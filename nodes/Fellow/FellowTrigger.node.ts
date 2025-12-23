@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import {
 	IHookFunctions,
 	IWebhookFunctions,
@@ -10,40 +9,7 @@ import {
 } from 'n8n-workflow';
 
 import { getFellowApiBaseUrl, shouldSkipSslValidation } from './config';
-
-/**
- * Verify Svix webhook signature.
- * Svix uses HMAC-SHA256 with a base64-encoded secret prefixed with "whsec_".
- */
-function verifySvixSignature(
-	secret: string,
-	msgId: string,
-	msgTimestamp: string,
-	body: string,
-	signatures: string,
-): boolean {
-	// Extract the base64 secret (remove "whsec_" prefix)
-	const secretBase64 = secret.startsWith('whsec_') ? secret.slice(6) : secret;
-	const secretBytes = Buffer.from(secretBase64, 'base64');
-
-	// Build the signed content: "{msg_id}.{timestamp}.{body}"
-	const signedContent = `${msgId}.${msgTimestamp}.${body}`;
-
-	// Compute expected signature
-	const expectedSignature = crypto
-		.createHmac('sha256', secretBytes)
-		.update(signedContent)
-		.digest('base64');
-
-	// Parse signatures from header (format: "v1,sig1 v1,sig2")
-	const providedSignatures = signatures.split(' ').map((s) => {
-		const parts = s.split(',');
-		return parts.length === 2 ? parts[1] : '';
-	});
-
-	// Check if any signature matches
-	return providedSignatures.some((sig) => sig === expectedSignature);
-}
+import { verifySvixSignature } from './signatureVerification';
 
 // Human-readable event names for webhook descriptions
 const EVENT_DESCRIPTIONS: Record<string, string> = {
@@ -262,40 +228,47 @@ export class FellowTrigger implements INodeType {
 		const staticData = this.getWorkflowStaticData('node');
 		const webhookSecret = staticData.webhookSecret as string | undefined;
 
-		// Verify signature if we have a secret and Svix headers
-		if (webhookSecret && svixId && svixTimestamp && svixSignature) {
-			// Get raw body for signature verification
-			let rawBody: string;
-			if (req.rawBody) {
-				rawBody = Buffer.isBuffer(req.rawBody) ? req.rawBody.toString('utf8') : String(req.rawBody);
-			} else {
-				rawBody = JSON.stringify(body);
-			}
-
-			const isValid = verifySvixSignature(
-				webhookSecret,
-				svixId,
-				svixTimestamp,
-				rawBody,
-				svixSignature,
-			);
-
-			if (!isValid) {
-				this.logger.error('[Fellow Trigger] Invalid webhook signature - rejecting request');
-				return {
-					webhookResponse: 'Unauthorized',
-					noWebhookResponse: true,
-				};
-			}
-
-			this.logger.info('[Fellow Trigger] Signature verified successfully');
-		} else if (!webhookSecret) {
-			this.logger.warn(
-				'[Fellow Trigger] No webhook secret stored - skipping signature verification',
-			);
-		} else {
-			this.logger.warn('[Fellow Trigger] Missing Svix headers - skipping signature verification');
+		// Verify webhook signature using guard clauses
+		if (!webhookSecret) {
+			this.logger.warn('[Fellow Trigger] No webhook secret stored - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
 		}
+
+		if (!svixId || !svixTimestamp || !svixSignature) {
+			this.logger.warn('[Fellow Trigger] Missing Svix headers - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
+		}
+
+		// Get raw body for signature verification
+		const rawBody = req.rawBody
+			? Buffer.isBuffer(req.rawBody)
+				? req.rawBody.toString('utf8')
+				: String(req.rawBody)
+			: JSON.stringify(body);
+
+		const isValid = verifySvixSignature(
+			webhookSecret,
+			svixId,
+			svixTimestamp,
+			rawBody,
+			svixSignature,
+		);
+
+		if (!isValid) {
+			this.logger.error('[Fellow Trigger] Invalid webhook signature - rejecting request');
+			return {
+				webhookResponse: 'Unauthorized',
+				noWebhookResponse: true,
+			};
+		}
+
+		this.logger.info('[Fellow Trigger] Signature verified successfully');
 
 		// Pass through the raw payload for normal events
 		return {
