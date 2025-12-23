@@ -48,9 +48,11 @@ export function verifySvixSignature(
 		return parts.length === 2 ? parts[1] : '';
 	});
 
-	// Check if the first provided signature matches the expected signature
-	const expectedBuffer = Buffer.from(expectedSignature);
-	const providedBuffer = Buffer.from(providedSignatures[0]);
+	// Decode base64 signatures to compare actual cryptographic bytes
+	// Using 'base64' encoding is critical - without it, Buffer.from() defaults to UTF-8
+	// which would compare the string representation instead of the decoded signature bytes
+	const expectedBuffer = Buffer.from(expectedSignature, 'base64');
+	const providedBuffer = Buffer.from(providedSignatures[0], 'base64');
 
 	// timingSafeEqual requires buffers of the same length
 	if (expectedBuffer.length !== providedBuffer.length) {

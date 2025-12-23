@@ -207,9 +207,6 @@ export class FellowTrigger implements INodeType {
 		const req = this.getRequestObject();
 		const body = this.getBodyData() as IDataObject;
 
-		this.logger.info('[Fellow Trigger] >>> WEBHOOK METHOD CALLED <<<');
-		this.logger.info(`[Fellow Trigger] Body: ${JSON.stringify(body).substring(0, 200)}`);
-
 		// Handle URL verification challenge from Fellow
 		// When WEBHOOK_VERIFICATION_ENABLED=true, Fellow sends a challenge that must be echoed back
 		if (body.type === 'url_verification' && body.challenge) {
