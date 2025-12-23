@@ -43,21 +43,41 @@ export function verifySvixSignature(
 		.digest('base64');
 
 	// Parse signatures from header (format: "v1,sig1 v1,sig2")
+	// Svix may send multiple signatures during key rotation
 	const providedSignatures = signatures.split(' ').map((s) => {
 		const parts = s.split(',');
 		return parts.length === 2 ? parts[1] : '';
 	});
 
-	// Decode base64 signatures to compare actual cryptographic bytes
+	// Decode expected signature to compare actual cryptographic bytes
 	// Using 'base64' encoding is critical - without it, Buffer.from() defaults to UTF-8
 	// which would compare the string representation instead of the decoded signature bytes
 	const expectedBuffer = Buffer.from(expectedSignature, 'base64');
-	const providedBuffer = Buffer.from(providedSignatures[0], 'base64');
 
-	// timingSafeEqual requires buffers of the same length
-	if (expectedBuffer.length !== providedBuffer.length) {
-		return false;
+	// Check if ANY of the provided signatures match (important for key rotation)
+	for (const providedSig of providedSignatures) {
+		if (!providedSig) {
+			continue; // Skip empty signatures
+		}
+
+		try {
+			const providedBuffer = Buffer.from(providedSig, 'base64');
+
+			// timingSafeEqual requires buffers of the same length
+			if (expectedBuffer.length !== providedBuffer.length) {
+				continue; // Try next signature
+			}
+
+			// Use constant-time comparison to prevent timing attacks
+			if (crypto.timingSafeEqual(expectedBuffer, providedBuffer)) {
+				return true; // Found a matching signature
+			}
+		} catch (error) {
+			// Invalid base64, try next signature
+			continue;
+		}
 	}
 
-	return crypto.timingSafeEqual(expectedBuffer, providedBuffer);
+	// No matching signature found
+	return false;
 }

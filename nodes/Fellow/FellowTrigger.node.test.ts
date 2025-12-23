@@ -68,13 +68,41 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 			expect(result).toBe(true);
 		});
 
-		it('accepts signature with multiple signatures in header (uses first)', () => {
+		it('accepts signature when valid signature is first in multiple signatures', () => {
 			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
 			const msgId = 'msg_12345';
 			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({ type: 'test' });
 			const validSignature = generateValidSignature(secret, msgId, timestamp, body);
 			const multiSignature = `${validSignature} v1,fake_second_signature`;
+
+			const result = verifySvixSignature(secret, msgId, timestamp, body, multiSignature);
+
+			expect(result).toBe(true);
+		});
+
+		it('accepts signature when valid signature is second in multiple signatures', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const validSignature = generateValidSignature(secret, msgId, timestamp, body);
+			// Valid signature is second (important for key rotation)
+			const multiSignature = `v1,invalidBase64Sig ${validSignature}`;
+
+			const result = verifySvixSignature(secret, msgId, timestamp, body, multiSignature);
+
+			expect(result).toBe(true);
+		});
+
+		it('accepts signature when valid signature is last in multiple signatures', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
+			const body = JSON.stringify({ type: 'test' });
+			const validSignature = generateValidSignature(secret, msgId, timestamp, body);
+			// Valid signature is last (simulates key rotation scenario)
+			const multiSignature = `v1,fakeSig1 v1,fakeSig2 ${validSignature}`;
 
 			const result = verifySvixSignature(secret, msgId, timestamp, body, multiSignature);
 
@@ -154,6 +182,19 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 			const body = JSON.stringify({ type: 'test' });
 
 			const result = verifySvixSignature(secret, msgId, timestamp, body, 'v1,');
+
+			expect(result).toBe(false);
+		});
+
+		it('rejects when all signatures in multiple signature header are invalid', () => {
+			const secret = 'whsec_' + Buffer.from('test-secret-key').toString('base64');
+			const msgId = 'msg_12345';
+			const timestamp = Math.floor(Date.now() / 1000).toString();
+			const body = JSON.stringify({ type: 'test' });
+			// All signatures are invalid
+			const multiSignature = 'v1,invalidSig1 v1,invalidSig2 v1,invalidSig3';
+
+			const result = verifySvixSignature(secret, msgId, timestamp, body, multiSignature);
 
 			expect(result).toBe(false);
 		});
