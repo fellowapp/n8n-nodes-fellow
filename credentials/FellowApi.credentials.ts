@@ -3,6 +3,7 @@ import { IAuthenticateGeneric, ICredentialType, INodeProperties } from 'n8n-work
 export class FellowApi implements ICredentialType {
 	name = 'fellowApi';
 	displayName = 'Fellow API';
+	icon = 'file:FellowApi.svg' as const;
 	documentationUrl = 'https://developers.fellow.ai/reference/introduction';
 	properties: INodeProperties[] = [
 		{
