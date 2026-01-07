@@ -15,7 +15,7 @@ import { verifySvixSignature } from './signatureVerification';
 const EVENT_DESCRIPTIONS: Record<string, string> = {
 	'ai_note.generated': 'AI Note Generated',
 	'ai_note.shared_to_channel': 'AI Note Shared to Channel',
-	'action_item.assigned': 'Action Item Assigned',
+	'action_item.assigned': 'Action Item Assigned To Me',
 	'action_item.completed': 'Action Item Completed',
 };
 
@@ -67,9 +67,9 @@ export class FellowTrigger implements INodeType {
 						description: 'Triggers when an AI note is shared to a Fellow channel',
 					},
 					{
-						name: 'Action Item Assigned',
+						name: 'Action Item Assigned To Me',
 						value: 'action_item.assigned',
-						description: 'Triggers when an action item is assigned to a user',
+						description: 'Triggers when an action item is assigned to me',
 					},
 					{
 						name: 'Action Item Completed',
@@ -114,7 +114,7 @@ export class FellowTrigger implements INodeType {
 						'fellowApi',
 						{
 							method: 'POST',
-							url: `${apiBaseUrl}/webhooks`,
+							url: `${apiBaseUrl}/webhook`,
 							headers: {
 								'Content-Type': 'application/json',
 							},
@@ -178,7 +178,7 @@ export class FellowTrigger implements INodeType {
 					// Call Fellow Developer API to delete the webhook
 					await this.helpers.httpRequestWithAuthentication.call(this, 'fellowApi', {
 						method: 'DELETE',
-						url: `${apiBaseUrl}/webhooks/${webhookId}`,
+						url: `${apiBaseUrl}/webhook/${webhookId}`,
 						skipSslCertificateValidation: shouldSkipSslValidation(),
 					});
 
