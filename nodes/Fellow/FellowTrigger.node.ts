@@ -15,7 +15,7 @@ import { verifySvixSignature } from './signatureVerification';
 const EVENT_DESCRIPTIONS: Record<string, string> = {
 	'ai_note.generated': 'AI Note Generated',
 	'ai_note.shared_to_channel': 'AI Note Shared to Channel',
-	'action_item.assigned': 'Action Item Assigned',
+	'action_item.assigned_to_me': 'Action Item Assigned To Me',
 	'action_item.completed': 'Action Item Completed',
 };
 
@@ -67,9 +67,9 @@ export class FellowTrigger implements INodeType {
 						description: 'Triggers when an AI note is shared to a Fellow channel',
 					},
 					{
-						name: 'Action Item Assigned',
-						value: 'action_item.assigned',
-						description: 'Triggers when an action item is assigned to a user',
+						name: 'Action Item Assigned To Me',
+						value: 'action_item.assigned_to_me',
+						description: 'Triggers when an action item is assigned to me',
 					},
 					{
 						name: 'Action Item Completed',

@@ -49,7 +49,7 @@ describe('FellowTrigger - Svix Signature Verification', () => {
 			const msgId = 'msg_complex_123';
 			const timestamp = Math.floor(Date.now() / 1000).toString();
 			const body = JSON.stringify({
-				type: 'action_item.assigned',
+				type: 'action_item.assigned_to_me',
 				data: {
 					action_item_id: 'abc-123',
 					assignee: 'user@example.com',
