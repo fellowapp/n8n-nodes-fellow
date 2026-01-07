@@ -114,7 +114,7 @@ export class FellowTrigger implements INodeType {
 						'fellowApi',
 						{
 							method: 'POST',
-							url: `${apiBaseUrl}/webhooks`,
+							url: `${apiBaseUrl}/webhook`,
 							headers: {
 								'Content-Type': 'application/json',
 							},
@@ -178,7 +178,7 @@ export class FellowTrigger implements INodeType {
 					// Call Fellow Developer API to delete the webhook
 					await this.helpers.httpRequestWithAuthentication.call(this, 'fellowApi', {
 						method: 'DELETE',
-						url: `${apiBaseUrl}/webhooks/${webhookId}`,
+						url: `${apiBaseUrl}/webhook/${webhookId}`,
 						skipSslCertificateValidation: shouldSkipSslValidation(),
 					});
 
