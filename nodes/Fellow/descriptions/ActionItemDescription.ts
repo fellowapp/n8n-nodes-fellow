@@ -66,6 +66,24 @@ export const actionItemFields: INodeProperties[] = [
 		},
 		options: [
 			{
+				displayName: 'Scope',
+				name: 'scope',
+				type: 'options',
+				options: [
+					{
+						name: 'Assigned to Me',
+						value: 'assigned_to_me',
+					},
+					{
+						name: 'Assigned to Others',
+						value: 'assigned_to_others',
+					},
+				],
+				default: 'assigned_to_me',
+				description:
+					'Which action items to retrieve. If not specified, returns all accessible items.',
+			},
+			{
 				displayName: 'Completed',
 				name: 'completed',
 				type: 'boolean',

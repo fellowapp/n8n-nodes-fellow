@@ -24,6 +24,7 @@ export async function executeActionItemGetMany(
 	itemIndex: number,
 ): Promise<INodeExecutionData[]> {
 	const filters = context.getNodeParameter('filters', itemIndex, {}) as {
+		scope?: string;
 		completed?: boolean;
 		archived?: boolean;
 		ai_detected?: boolean;
@@ -35,13 +36,14 @@ export async function executeActionItemGetMany(
 	};
 
 	const body: {
-		filters?: Record<string, boolean>;
+		filters?: Record<string, boolean | string>;
 		order_by?: string;
 		pagination?: { page_size?: number; cursor?: string };
 	} = {};
 
 	// Add filters if any are set
-	const activeFilters: Record<string, boolean> = {};
+	const activeFilters: Record<string, boolean | string> = {};
+	if (filters.scope !== undefined) activeFilters.scope = filters.scope;
 	if (filters.completed !== undefined) activeFilters.completed = filters.completed;
 	if (filters.archived !== undefined) activeFilters.archived = filters.archived;
 	if (filters.ai_detected !== undefined) activeFilters.ai_detected = filters.ai_detected;
