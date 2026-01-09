@@ -65,8 +65,10 @@ export async function executeActionItemGetMany(
 	const response = await context.helpers.httpRequestWithAuthentication.call(context, 'fellowApi', {
 		method: 'POST',
 		url: `${apiBaseUrl}/action_items`,
-		body,
-		json: true,
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(body),
 		skipSslCertificateValidation: shouldSkipSslValidation(),
 	});
 
@@ -105,8 +107,10 @@ export async function executeActionItemComplete(
 	const response = await context.helpers.httpRequestWithAuthentication.call(context, 'fellowApi', {
 		method: 'POST',
 		url: `${apiBaseUrl}/action_item/${actionItemId}/complete`,
-		body: { completed: true },
-		json: true,
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ completed: true }),
 		skipSslCertificateValidation: shouldSkipSslValidation(),
 	});
 
