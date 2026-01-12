@@ -10,7 +10,6 @@ jobs:
     environment: production
     permissions:
       contents: read
-      packages: write
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # 6.0.1
         with:
@@ -20,8 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@${{ github.repository_owner }}'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install flox
         uses: flox/install-flox-action@819183ecd53757be53d66f492eeb7d689687a66b # 2.1.0
@@ -53,9 +51,9 @@ jobs:
         run: flox activate -- pnpm version ${{ steps.release_version.outputs.version }} --no-git-tag-version --allow-same-version
 
       - name: Publish Production Package (@fellowapp/n8n-nodes-fellow)
-        run: flox activate -- pnpm publish --access restricted --no-git-checks
+        run: flox activate -- pnpm publish --access public --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Revert package.json changes
         run: git checkout -- package.json

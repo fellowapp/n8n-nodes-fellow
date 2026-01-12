@@ -33,10 +33,12 @@
     "lintfix": "eslint nodes credentials --fix",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "publish:manual": "pnpm build:prod && pnpm publish --access public --no-git-checks"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "files": [
     "dist"
