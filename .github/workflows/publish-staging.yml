@@ -54,7 +54,7 @@ jobs:
 
       - name: Update package.json for Staging (Name, Version, and Registry)
         run: |
-          sed -i.bak 's/"name": "@fellowapp\/n8n-nodes-fellow"/"name": "@fellowapp\/n8n-nodes-fellow-staging"/' package.json && rm package.json.bak
+          sed -i.bak 's/"name": "@fellow\/n8n-nodes-fellow"/"name": "@fellowapp\/n8n-nodes-fellow-staging"/' package.json && rm package.json.bak
           sed -i.bak 's|"registry": "https://registry.npmjs.org"|"registry": "https://npm.pkg.github.com"|' package.json && rm package.json.bak
           flox activate -- pnpm version ${{ steps.staging_version.outputs.version_string }} --no-git-tag-version --allow-same-version
         shell: bash
