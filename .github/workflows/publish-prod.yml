@@ -53,8 +53,11 @@ jobs:
         run: flox activate -- pnpm version ${{ steps.release_version.outputs.version }} --no-git-tag-version --allow-same-version
 
       - name: Publish Production Package (@fellow/n8n-nodes-fellow)
-        run: flox activate -- pnpm publish --access public --no-git-checks
+        run: |
+          rm -rf ~/.npmrc
+          flox activate -- pnpm publish --access public --no-git-checks
         env:
+          NODE_AUTH_TOKEN: ''
           NPM_CONFIG_PROVENANCE: true
 
       - name: Revert package.json changes
