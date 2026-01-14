@@ -52,10 +52,12 @@ jobs:
       - name: Update package.json version
         run: flox activate -- pnpm version ${{ steps.release_version.outputs.version }} --no-git-tag-version --allow-same-version
 
+      - name: Clear auth token for OIDC
+        run: echo "NODE_AUTH_TOKEN=" >> GITHUB_ENV
+
       - name: Publish Production Package (@fellow/n8n-nodes-fellow)
         run: flox activate -- pnpm publish --access public --no-git-checks
         env:
-          NODE_AUTH_TOKEN: '' # Clear default token set by setup-node to use OIDC
           NPM_CONFIG_PROVENANCE: true
 
       - name: Revert package.json changes
