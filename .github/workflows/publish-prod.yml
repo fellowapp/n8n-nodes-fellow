@@ -57,6 +57,8 @@ jobs:
 
       - name: Publish Production Package (@fellow/n8n-nodes-fellow)
         run: flox activate -- pnpm publish --access public --no-git-checks
+        env:
+          NPM_CONFIG_PROVENANCE: true
 
       - name: Revert package.json changes
         run: git checkout -- package.json
