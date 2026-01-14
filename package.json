@@ -1,81 +1,82 @@
 {
-  "name": "@fellow/n8n-nodes-fellow",
-  "version": "0.1.0",
-  "description": "Fellow nodes for n8n",
-  "keywords": [
-    "n8n-community-node-package"
-  ],
-  "license": "MIT",
-  "homepage": "https://fellow.app",
-  "author": {
-    "name": "Fellow",
-    "email": "devteam@fellow.app"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/fellowapp/n8n-nodes-fellow.git"
-  },
-  "engines": {
-    "node": ">=18.10",
-    "pnpm": ">=9.1"
-  },
-  "packageManager": "pnpm@9.15.3",
-  "main": "index.js",
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "build": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "build:prod": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "build:staging": "node scripts/generateConfig.js staging && tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "build:dev": "node scripts/generateConfig.js dev && tsc && gulp --gulpfile gulpfile.cjs build:icons",
-    "dev": "node scripts/generateConfig.js dev && tsc --watch",
-    "format": "prettier nodes credentials --write",
-    "lint": "eslint nodes credentials",
-    "lintfix": "eslint nodes credentials --fix",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "publish:manual": "pnpm build:prod && pnpm publish --access public --no-git-checks"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org",
-    "access": "public"
-  },
-  "files": [
-    "dist",
-    "!dist/**/*.test.*",
-    "!dist/*.tsbuildinfo",
-    "README.md"
-  ],
-  "n8n": {
-    "n8nNodesApiVersion": 1,
-    "credentials": [
-      "dist/credentials/FellowApi.credentials.js"
-    ],
-    "nodes": [
-      "dist/nodes/Fellow/Fellow.node.js",
-      "dist/nodes/Fellow/FellowTrigger.node.js"
-    ]
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.25.1",
-    "@types/node": "^22.15.3",
-    "@typescript-eslint/parser": "^8.31.1",
-    "@vitest/coverage-v8": "^2.1.8",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.25.1",
-    "eslint-plugin-n8n-nodes-base": "^1.16.3",
-    "globals": "^16.0.0",
-    "gulp": "^5.0.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.3",
-    "vitest": "^2.1.8"
-  },
-  "peerDependencies": {
-    "n8n-workflow": "*"
-  },
-  "pnpm": {
-    "overrides": {
-      "brace-expansion@<1.1.12": "1.1.12"
-    }
-  }
+	"name": "@fellow/n8n-nodes-fellow",
+	"version": "0.1.0",
+	"description": "Fellow nodes for n8n",
+	"keywords": [
+		"n8n-community-node-package"
+	],
+	"license": "MIT",
+	"homepage": "https://fellow.app",
+	"author": {
+		"name": "Fellow",
+		"email": "devteam@fellow.app"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fellowapp/n8n-nodes-fellow.git"
+	},
+	"engines": {
+		"node": ">=18.10",
+		"pnpm": ">=9.1"
+	},
+	"packageManager": "pnpm@9.15.3",
+	"main": "index.js",
+	"scripts": {
+		"preinstall": "npx only-allow pnpm",
+		"build": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+		"build:prod": "node scripts/generateConfig.js prod && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+		"build:staging": "node scripts/generateConfig.js staging && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+		"build:dev": "node scripts/generateConfig.js dev && tsc && gulp --gulpfile gulpfile.cjs build:icons",
+		"dev": "node scripts/generateConfig.js dev && tsc --watch",
+		"format": "prettier nodes credentials --write",
+		"lint": "eslint nodes credentials",
+		"lintfix": "eslint nodes credentials --fix",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"publish:manual": "pnpm build:prod && pnpm publish --access public --no-git-checks"
+	},
+	"publishConfig": {
+		"registry": "https://registry.npmjs.org",
+		"access": "public",
+		"provenance": true
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/*.tsbuildinfo",
+		"README.md"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"credentials": [
+			"dist/credentials/FellowApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Fellow/Fellow.node.js",
+			"dist/nodes/Fellow/FellowTrigger.node.js"
+		]
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.25.1",
+		"@types/node": "^22.15.3",
+		"@typescript-eslint/parser": "^8.31.1",
+		"@vitest/coverage-v8": "^2.1.8",
+		"cross-env": "^7.0.3",
+		"eslint": "^9.25.1",
+		"eslint-plugin-n8n-nodes-base": "^1.16.3",
+		"globals": "^16.0.0",
+		"gulp": "^5.0.0",
+		"prettier": "^3.5.3",
+		"typescript": "^5.8.3",
+		"vitest": "^2.1.8"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	},
+	"pnpm": {
+		"overrides": {
+			"brace-expansion@<1.1.12": "1.1.12"
+		}
+	}
 }
