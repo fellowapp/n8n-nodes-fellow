@@ -4,13 +4,14 @@ on:
   release:
     types: [published]
 
+permissions:
+  id-token: write # Required for OIDC (trsuted publishing)
+  contents: read
+
 jobs:
   publish-prod:
     runs-on: ubuntu-latest
     environment: production
-    permissions:
-      id-token: write # Required for OIDC (trsuted publishing)
-      contents: read
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # 6.0.1
         with:
