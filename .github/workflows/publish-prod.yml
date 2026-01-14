@@ -53,7 +53,7 @@ jobs:
         run: flox activate -- pnpm version ${{ steps.release_version.outputs.version }} --no-git-tag-version --allow-same-version
 
       - name: Clear auth token for OIDC
-        run: echo "NODE_AUTH_TOKEN=" >> GITHUB_ENV
+        run: echo "NODE_AUTH_TOKEN=" >> $GITHUB_ENV
 
       - name: Publish Production Package (@fellow/n8n-nodes-fellow)
         run: flox activate -- pnpm publish --access public --no-git-checks
