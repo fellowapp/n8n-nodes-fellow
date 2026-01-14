@@ -42,6 +42,8 @@
   },
   "files": [
     "dist",
+    "!dist/**/*.test.*",
+    "!dist/*.tsbuildinfo",
     "README.md"
   ],
   "n8n": {
