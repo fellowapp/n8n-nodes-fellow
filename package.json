@@ -70,5 +70,10 @@
   },
   "peerDependencies": {
     "n8n-workflow": "*"
+  },
+  "pnpm": {
+    "overrides": {
+      "brace-expansion@<1.1.12": "1.1.12"
+    }
   }
 }
