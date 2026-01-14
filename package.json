@@ -1,5 +1,5 @@
 {
-  "name": "@fellowapp/n8n-nodes-fellow",
+  "name": "@fellow/n8n-nodes-fellow",
   "version": "0.1.0",
   "description": "Fellow nodes for n8n",
   "keywords": [
