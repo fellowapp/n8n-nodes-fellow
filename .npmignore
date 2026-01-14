@@ -1,2 +1,5 @@
 .DS_Store
 *.tsbuildinfo
+**/*.test.js
+**/*.test.d.ts
+**/*.test.js.map
