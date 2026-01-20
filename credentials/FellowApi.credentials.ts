@@ -46,8 +46,8 @@ export class FellowApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '=https://{{$credentials.subdomain}}.fellow.app/api/v1',
-			url: '/action_items',
-			method: 'POST',
+			url: '/me',
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
 			},
