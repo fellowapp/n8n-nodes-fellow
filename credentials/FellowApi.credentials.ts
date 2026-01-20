@@ -1,4 +1,9 @@
-import { IAuthenticateGeneric, ICredentialType, INodeProperties } from 'n8n-workflow';
+import {
+	IAuthenticateGeneric,
+	ICredentialTestRequest,
+	ICredentialType,
+	INodeProperties,
+} from 'n8n-workflow';
 
 export class FellowApi implements ICredentialType {
 	name = 'fellowApi';
@@ -35,6 +40,18 @@ export class FellowApi implements ICredentialType {
 			headers: {
 				'X-API-KEY': '={{$credentials.apiKey}}',
 			},
+		},
+	};
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: '=https://{{$credentials.subdomain}}.fellow.app/api/v1',
+			url: '/action_items',
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ pagination: { page_size: 1 } }),
 		},
 	};
 }
