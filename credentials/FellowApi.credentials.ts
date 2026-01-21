@@ -5,6 +5,12 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
+import { FELLOW_API_BASE_URL_PATTERN, FELLOW_SKIP_SSL_VALIDATION } from '../nodes/Fellow/apiConfig';
+
+// Build the credential test URL using the same pattern as the node
+// This ensures dev/staging/prod builds all use the correct environment URL
+const credentialTestBaseUrl = `=${FELLOW_API_BASE_URL_PATTERN.replace('{subdomain}', '{{$credentials.subdomain}}')}`;
+
 export class FellowApi implements ICredentialType {
 	name = 'fellowApi';
 	displayName = 'Fellow API';
@@ -45,13 +51,10 @@ export class FellowApi implements ICredentialType {
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: '=https://{{$credentials.subdomain}}.fellow.app/api/v1',
+			baseURL: credentialTestBaseUrl,
 			url: '/me',
 			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ pagination: { page_size: 1 } }),
+			skipSslCertificateValidation: FELLOW_SKIP_SSL_VALIDATION,
 		},
 	};
 }
