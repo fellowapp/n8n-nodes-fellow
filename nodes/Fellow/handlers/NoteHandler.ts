@@ -15,7 +15,7 @@ export async function executeNoteGet(
 		skipSslCertificateValidation: shouldSkipSslValidation(),
 	});
 
-	return [{ json: response }];
+	return [{ json: response, pairedItem: { item: itemIndex } }];
 }
 
 export async function executeNoteGetMany(
@@ -100,6 +100,7 @@ export async function executeNoteGetMany(
 				...note,
 				_pagination: response?.notes?.page_info,
 			},
+			pairedItem: { item: itemIndex },
 		});
 	}
 
@@ -110,6 +111,7 @@ export async function executeNoteGetMany(
 				message: 'No notes found',
 				_pagination: response?.notes?.page_info,
 			},
+			pairedItem: { item: itemIndex },
 		});
 	}
 

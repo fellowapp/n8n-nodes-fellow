@@ -15,7 +15,7 @@ export async function executeActionItemGet(
 		skipSslCertificateValidation: shouldSkipSslValidation(),
 	});
 
-	return [{ json: response }];
+	return [{ json: response, pairedItem: { item: itemIndex } }];
 }
 
 export async function executeActionItemGetMany(
@@ -83,6 +83,7 @@ export async function executeActionItemGetMany(
 				...item,
 				_pagination: response?.action_items?.page_info,
 			},
+			pairedItem: { item: itemIndex },
 		});
 	}
 
@@ -93,6 +94,7 @@ export async function executeActionItemGetMany(
 				message: 'No action items found',
 				_pagination: response?.action_items?.page_info,
 			},
+			pairedItem: { item: itemIndex },
 		});
 	}
 
@@ -116,5 +118,5 @@ export async function executeActionItemComplete(
 		skipSslCertificateValidation: shouldSkipSslValidation(),
 	});
 
-	return [{ json: response }];
+	return [{ json: response, pairedItem: { item: itemIndex } }];
 }
