@@ -111,6 +111,7 @@ export class Fellow implements INodeType {
 						json: {
 							error: error instanceof Error ? error.message : String(error),
 						},
+						pairedItem: { item: i },
 					});
 					continue;
 				}

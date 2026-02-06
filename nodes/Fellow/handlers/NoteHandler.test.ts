@@ -52,7 +52,7 @@ describe('NoteHandler', () => {
 					json: true,
 				}),
 			);
-			expect(result).toEqual([{ json: mockResponse }]);
+			expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
 		});
 
 		it('uses the correct URL for the note', async () => {
