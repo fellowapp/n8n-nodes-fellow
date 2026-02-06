@@ -56,7 +56,7 @@ describe('ActionItemHandler', () => {
 					json: true,
 				}),
 			);
-			expect(result).toEqual([{ json: mockResponse }]);
+			expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
 		});
 
 		it('uses the correct URL for the action item', async () => {
@@ -294,7 +294,7 @@ describe('ActionItemHandler', () => {
 					body: JSON.stringify({ completed: true }),
 				}),
 			);
-			expect(result).toEqual([{ json: mockResponse }]);
+			expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
 		});
 
 		it('uses the correct action item ID in URL', async () => {
