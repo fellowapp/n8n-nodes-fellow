@@ -11,7 +11,9 @@ on:
 jobs:
   update-version:
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: staging
+      deployment: false
     # Only run if the publish workflow succeeded
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:

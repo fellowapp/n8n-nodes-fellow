@@ -8,7 +8,9 @@ on:
 jobs:
   publish-staging:
     runs-on: ubuntu-latest
-    environment: staging
+    environment:
+      name: staging
+      deployment: false
     permissions:
       contents: read
       packages: write
