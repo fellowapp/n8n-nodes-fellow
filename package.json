@@ -1,6 +1,6 @@
 {
 	"name": "@fellow/n8n-nodes-fellow",
-	"version": "0.1.0",
+	"version": "1.0.3",
 	"description": "Fellow nodes for n8n",
 	"keywords": [
 		"n8n-community-node-package"
